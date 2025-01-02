@@ -2,7 +2,6 @@ import express from 'express'
 const app = express();
 
 import session from 'express-session'
-import crypto from 'crypto'
 import path from 'path'
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
@@ -10,23 +9,10 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-import mysql from 'mysql2'
 import fs from 'fs'
 console.log(process.env.OPENAI_ENDPOINT)
 console.log(process.env.OPENAI_KEY)
 process.setMaxListeners(0);
-
-import spawn from 'child_process';
-const temperatures = []; // Store readings
-
-import moment from 'moment' 
-var Moment = moment().format('yyyy-MM-dd:hh:mm:ss');
-console.log(Moment)
-const array = ["a","b","c","d","e","f","g","h","i","j","j","l","m","n","o","p","q"]
-// Generate a random key of 32 bytes
-const randomKey = crypto.randomBytes(32).toString('hex')
-const randomKeyString = "FoundationPhishing"
-//console.log(randomKeyString) // aedfjiejoicpbojlpleolaapamejafjhbljipmpecbgefhmnocecehclhnplbcjg
 
 import {Server as HTTPServer} from 'http'
 const http = HTTPServer(app)
@@ -34,12 +20,7 @@ import {Server, Socket} from 'socket.io';
 const io = new Server(http)
 
 import {parse} from 'csv-parse';
-
 import { OpenAIClient, AzureKeyCredential } from "@azure/openai"
-
-console.log(randomKeyString)
-import ip from "ip";
-//console.log( ip.address() );
  
 var Condition3Phishing = [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47, 51, 55, 59, 63, 67, 71, 75, 79, 83, 87, 91, 95, 99, 103, 107, 111, 115, 119, 123, 127, 131, 135, 139, 143, 147, 151, 155, 159, 163, 167, 171, 175, 179, 183, 187, 191, 195, 199, 203, 207, 211, 215, 219, 223, 227, 231, 235, 239, 243, 247, 251, 255, 259, 263, 267, 271, 275, 279, 283, 287, 291, 295, 299, 303, 307, 311, 315, 319, 323, 327, 331, 335, 339, 343, 347, 351, 355, 359, 363, 367, 371, 375, 379, 383, 387, 391, 395, 399, 403, 407, 411, 415, 419, 423, 427, 431, 435, 439, 443, 447, 454, 458, 462, 466, 470, 474, 478, 482, 486, 490, 494, 498, 502, 506, 510, 514, 518, 522, 526, 530, 534, 538, 542, 546, 550, 554, 558, 562, 566, 570, 574, 578, 582, 586, 590, 594, 598, 602, 606, 610, 614, 618, 622, 626, 630, 634, 636, 639, 643, 647, 651, 655, 659, 663, 667, 671, 675, 679, 683, 687, 691, 695, 699, 703, 707, 711, 715, 719, 723, 727, 731, 735, 739, 743, 747, 751, 755]
 var Condition3Ham      = [759, 763, 767, 771, 775, 779, 783, 787, 791, 795, 799, 803, 807, 811, 815, 819, 823, 827, 831, 835, 839, 843, 847, 851, 855, 859, 863, 867, 871, 875, 879, 883, 887, 891, 895, 899, 903, 907, 911, 915, 919, 923, 927, 931, 935, 939, 943, 947, 951, 955, 959, 963, 967, 971, 975, 979, 983, 987, 991, 995, 999, 1003, 1007, 1011, 1015, 1019, 1023, 1027, 1031, 1035, 1039, 1043, 1047, 1051, 1055, 1059, 1063, 1067, 1071, 1075, 1079, 1083, 1087, 1091, 1095, 1099, 1103, 1107, 1111, 1115, 1119, 1123, 1127, 1131, 1135, 1139, 1143, 1147, 1151, 1155, 1159, 1163, 1167, 1171, 1175, 1179, 1183, 1187, 1191, 1195, 1199, 1203, 1207, 1211, 1215, 1219, 1223, 1227, 1231, 1235, 1239, 1243, 1247, 1251, 1255, 1259, 1263, 1267, 1271, 1275, 1279, 1283, 1287, 1291, 1295, 1299, 1303, 1307, 1311, 1315, 1319, 1323, 1327, 1331, 1335, 1339, 1343, 1347, 1351, 1355, 1359, 1363, 1367, 1371, 1375, 1379, 1383, 1387, 1391, 1395, 1399, 1403, 1407, 1411, 1415, 1419, 1423, 1427, 1431, 1435, 1439, 1443, 1447, 1451, 1455, 1459, 1463]
@@ -177,7 +158,7 @@ function meanOfVectors(vectors) {
 
 
 app.use(session({
-  secret: randomKey, // Change this to a secure secret key
+  secret: "None", // Change this to a secure secret key
   resave: true,
   saveUninitialized: true
 }));
