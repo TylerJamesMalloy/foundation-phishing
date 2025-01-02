@@ -1,6 +1,5 @@
 import express from 'express'
 const app = express();
-const port = 8888;
 
 import session from 'express-session'
 import crypto from 'crypto'
@@ -49,22 +48,6 @@ var Condition4Phishing = [1, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45, 49, 53, 5
 var Condition4Ham      = [757, 761, 765, 769, 773, 777, 781, 785, 789, 793, 797, 801, 805, 809, 813, 817, 821, 825, 829, 833, 837, 841, 845, 849, 853, 857, 861, 865, 869, 873, 877, 881, 885, 889, 893, 897, 901, 905, 909, 913, 917, 921, 925, 929, 933, 937, 941, 945, 949, 953, 957, 961, 965, 969, 973, 977, 981, 985, 989, 993, 997, 1001, 1005, 1009, 1013, 1017, 1021, 1025, 1029, 1033, 1037, 1041, 1045, 1049, 1053, 1057, 1061, 1065, 1069, 1073, 1077, 1081, 1085, 1089, 1093, 1097, 1101, 1105, 1109, 1113, 1117, 1121, 1125, 1129, 1133, 1137, 1141, 1145, 1149, 1153, 1157, 1161, 1165, 1169, 1173, 1177, 1181, 1185, 1189, 1193, 1197, 1201, 1205, 1209, 1213, 1217, 1221, 1225, 1229, 1233, 1237, 1241, 1245, 1249, 1253, 1257, 1261, 1265, 1269, 1273, 1277, 1281, 1285, 1289, 1293, 1297, 1301, 1305, 1309, 1313, 1317, 1321, 1325, 1329, 1333, 1337, 1341, 1345, 1349, 1353, 1357, 1361, 1365, 1369, 1373, 1377, 1381, 1385, 1389, 1393, 1397, 1401, 1405, 1409, 1413, 1417, 1421, 1425, 1429, 1433, 1437, 1441, 1445, 1449, 1453, 1457, 1461]
 
 // https://learn.microsoft.com/en-us/azure/mysql/single-server/connect-nodejs?tabs=windows
-var config =
-{
-    host: 'foundation-phishing.mysql.database.azure.com',
-    user: 'tylerjmalloy', 
-    password: process.env.AZURE_DB_PASSWORD,
-    database: 'foundation-phishing',
-    port: 3306,
-    ssl: {ca: fs.readFileSync("./DigiCertGlobalRootCA.crt.pem")},
-    connectionLimit: 10000,
-    connectTimeout: 1000000000,
-};
-
-const pool = mysql.createPool(config);
-
-
-
 const openAPIclient = new OpenAIClient(
   process.env.AZURE_OPENAI_ENDPOINT, 
   new AzureKeyCredential(process.env.AZURE_OPENAI_KEY)
@@ -407,5 +390,5 @@ app.get('/experiment4', (req,res)=>{
   res.sendFile(path.join(__dirname, 'public/html/startExperiment4.html'));
 })
 
-
+const port = process.env.PORT || 3000;
 http.listen(port, () => console.log(`Listening on port ${port}`));
