@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Socket.IO chat</title>
+    <style>
+        body { margin: 0; padding-bottom: 0rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+        #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+        #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+        #input:focus { outline: none; }
+        #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+
+        #messages { list-style-type: none; margin: 0; padding: 0; padding-bottom: 100px; }
+        #messages > li { padding: 0.5rem 1rem; }
+        #messages > li:nth-child(odd) { background: #efefef; }
+    </style>
+  </head>
+  <body>
+    <ul id="messages" style="width:100%;"></ul>
+    <form id="form" action="" style="width:100%;">
+      <input id="input" autocomplete="off" /><button id="sendButton">Send</button>
+    </form>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+        let counter = 0;
+
+        const socket = io({
+            auth: {
+                serverOffset: 0
+            },
+            ackTimeout: 10000,
+            retries: 3,
+        });
+
+        var totalQuestions = 0
+        var relevantQuestions = 0
+        var mturkid = localStorage.getItem("Mturkid");
+        var userid = localStorage.getItem("Userid");
+        var emailid = localStorage.getItem("EmailID");
+        var email = localStorage.getItem("Body");
+        var sender = localStorage.getItem("Sender");
+        var subject = localStorage.getItem("Subject");
+        var trial = localStorage.getItem("Trial");
+        var emailDecision = localStorage.getItem("Decision");
+        var howConfident = String(parseInt(localStorage.getItem("Confidence")) + 1);
+        var action = parseInt(localStorage.getItem("Action")) + 1;
+        var type = localStorage.getItem("Type");
+
+        switch(action){
+            case 1:
+            var actionString = 'respond to'
+                break
+            case 2:
+            var actionString = 'click the link in'
+                break
+            case 3:
+            var actionString = 'check the sender of'
+                break
+            case 4:
+            var actionString = 'check the link in'
+                break
+            case 5:
+            var actionString = 'delete'
+                break
+            case 6:
+            var actionString = 'report'
+                break
+        }
+
+        localStorage.setItem("Done", 0);
+        if(emailDecision == "false"){
+            var decisionString = "was not"
+        }else{
+            var decisionString = "was"
+        }
+
+        if(type == "phishing" || type == "spam"){
+            if(emailDecision == "true"){
+                localStorage.setItem("Done", 1);
+            }
+            var typeString = "was"
+        }else{
+            if(emailDecision == "false"){
+                localStorage.setItem("Done", 1);
+            }
+            var typeString = "was not"
+        }
+        
+        
+        var iblPredictionInformation = ""
+        var previouslyObserved = localStorage.getItem("previouslyObserved").split(",")
+        var response = $.ajax({
+            url: "/queryIBL",
+            data: { 
+                "UserId"            : userid,
+                "EmailType"         : type,
+                "PreviouslyObserved": previouslyObserved,
+            },
+            async:false,
+            cache: false,
+            type: "GET",
+            success: function(response) {
+                    iblPredictionInformation = response
+                },
+            error: function(xhr) {
+                console.log(xhr)
+            }
+        }).done(
+            function(){
+                // Sender Mismatch,Request Credentials,Subject Suspicious,Urgent,Offer,Link Mismatch
+                inital_message = "This message is about phishing emails. Your role is to prodive feedback to students who are determining if emails are phishing emails based on whether the email contains a mismatched link, a mismatched sender, uses urgent language, makes an offer, requests credentials, or has a suspicious subject. Address the student directly and do not refer to the student in the third person. The student read the following email: "
+                
+                inital_message = inital_message.concat(email)
+                inital_message = inital_message.concat(" This email was send from ")
+                inital_message = inital_message.concat(sender)
+                inital_message = inital_message.concat(". And the subject was ")
+                inital_message = inital_message.concat(subject)
+                inital_message = inital_message.concat(". The student replied that this email ")
+                inital_message = inital_message.concat(decisionString)
+                inital_message = inital_message.concat(" a phishing email. This email in reality ")
+                inital_message = inital_message.concat(typeString)
+                inital_message = inital_message.concat(" a phishing email. The student replied that the action they took would be to ")
+                inital_message = inital_message.concat(actionString)
+                inital_message = inital_message.concat(" the email. The student had a confidence rating of ")
+                inital_message = inital_message.concat(howConfident)
+                inital_message = inital_message.concat(" out of 5. Make a short list of the relevant things in this email that made the student correct or incorrect. Do not mention and html or css code in your response. For your next response only, format your response as a dashed list.")
+                //inital_message = inital_message.concat(iblPredictionInformation)
+                inital_message = inital_message.concat("Finish all responses with exactly 100 words. Do not start a new sentence with close to 100 words in your response.")
+                //console.log("INTIIAL MESSAGE: ", inital_message)
+                
+                var form = document.getElementById('form');
+                var input = document.getElementById('input');
+                var messages = document.getElementById('messages'); 
+                var message_request = [{"role": "system", "content": inital_message}]
+                var serverOffset = 0
+
+                var condition = localStorage.getItem("Condition");
+                var Decision = localStorage.getItem("Decision");
+                var Type = localStorage.getItem("Type");
+
+                var points = -1
+                if((Decision == "true" && Type=="phishing") || (Decision == "true" && Type=="spam") || (Decision == "false" && Type=="ham")){
+                    points = 1
+                }
+                
+                const item = document.createElement('li');
+                item.id = messages.getElementsByTagName("li").length;
+                item.style.fontSize = "20px";
+
+                if(Type == "N/A"){
+                    item.textContent = "This email could not be generated, you recieved 1 points for this trial.";
+                }else{
+                    var TypeString = Type
+                    if (Type=="ham"){
+                    TypeString = "not a phishing"
+                    }else{
+                    TypeString = "a phishing"
+                    }
+                    item.textContent = "This email was " + TypeString + " email, and you said that it " + decisionString + " a phishing email. You recieved " + points + " point for this trial.";
+                }
+            
+                messages.appendChild(item);
+                // Determine a way to immediately display the feedback with the point information
+                // before the chat with GPT loads. 
+                
+                if(condition == 1){
+                    document.getElementById("input").remove()
+                    document.getElementById("sendButton").remove()
+                    console.log("REMOVING CHAT WINDOW")
+                    localStorage.setItem("Done", 1);
+                    localStorage.setItem("Done", 0);
+                }
+
+                if(localStorage.getItem("Chat") == 1){
+                // GET INITIAL RESPONSE FROM CHAT-GPT
+                response = $.ajax({
+                    url: "/feedback",
+                    data: { 
+                        "MTurkId"   : mturkid,
+                        "UserId"    : userid,
+                        "EmailId"   : emailid,
+                        "Trial"     : trial, 
+                        "Condition" : condition,
+                        "Messages"  : message_request,
+                        "RelevantQuestions": relevantQuestions,
+                        "TotalQuestions": totalQuestions,
+                        "InitialMessage": true,
+                    },
+                    async:false,
+                    cache: false,
+                    type: "GET",
+                    success: function(response) {
+                        responses = response.split("\n-")
+                        for (let ii = 0; ii < responses.length; ii++){
+                            var item = document.createElement('li');
+                            item.id = messages.getElementsByTagName("li").length;
+                            if(condition == 1){
+                                item.style.fontSize = "24px";
+                            }
+                            item.textContent = responses[ii];
+                            if(ii > 0){
+                                item.textContent = '-' + item.textContent 
+                            }
+                            messages.appendChild(item);
+                        }
+                        var response_dict = {"role": "system", "content": response}
+                        message_request.push(response_dict)
+                        document.getElementById("form").reset();
+                        //window.scrollTo(0, document.body.scrollHeight);
+                        socket.auth.serverOffset = serverOffset;
+                        },
+                    error: function(xhr) {
+                        console.log(xhr)
+                    }
+                })
+                
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    //console.log("message_request length", message_request.length)
+                    if (input.value) {
+                        var new_message = input.value.concat("Finish all responses with exactly 50 words. Do not start a new sentence with close to 50 words in your response.")
+                        console.log(new_message)
+                        var message_dict = {"role": "user", "content": new_message}
+                        message_request.push(message_dict)
+                        const item = document.createElement('li');
+                        item.id = messages.getElementsByTagName("li").length;
+                        item.textContent = input.value;
+                        messages.appendChild(item);
+                        document.getElementById("form").reset();
+                        window.scrollTo(0, document.body.scrollHeight);
+                        socket.auth.serverOffset = serverOffset;
+                        const sendButton = document.getElementById('sendButton');
+                        sendButton.setAttribute('disabled', 'disabled');
+                        // Uncomment to allow for passing through experiment after irrelevant questions
+                        //localStorage.setItem("Done", 1);
+                        response = $.ajax({
+                            url: "/feedback",
+                            data: { 
+                                "MTurkId"   : mturkid,
+                                "UserId"    : userid,
+                                "EmailId"   : emailid,
+                                "Trial"     : trial, 
+                                "Condition" : condition,
+                                "Messages"  : message_request,
+                                "RelevantQuestions": relevantQuestions,
+                                "TotalQuestions": totalQuestions,
+                                "InitialMessage": false,
+                            },
+                            cache: false,
+                            type: "GET",
+                            success: function(response) {
+                                if(response != "That message does not seem to be a question relevant to phishing emails, please ask a relevant question or continue to the next trial of the experiment." && response != "That message seems too short for me to reply with useful information about phishing emails. Please ask a question with more context so I can be a helpful teaching aid." && response != "I couldn't provide feedback for that. My appologies."){
+                                    var message_dict = {"role": "system", "content": response}
+                                    message_request.push(message_dict)  
+                                    localStorage.setItem("Done", 1);
+                                    relevantQuestions = relevantQuestions + 1
+                                }
+                                totalQuestions = totalQuestions + 1
+                                
+                                responses = response.split("\n-")
+                                for (let ii = 0; ii < responses.length; ii++){
+                                    var item = document.createElement('li');
+                                    item.id = messages.getElementsByTagName("li").length;
+                                    if(condition == 1){
+                                        item.style.fontSize = "24px";
+                                    }
+                                    item.textContent = responses[ii];
+                                    if(ii > 0){
+                                        item.textContent = '-' + item.textContent 
+                                    }
+                                    messages.appendChild(item);
+                                }
+                                //const item = document.createElement('li');
+                                //item.id = messages.getElementsByTagName("li").length;
+                                //item.textContent = response;
+                                //messages.appendChild(item);
+                                document.getElementById("form").reset();
+                                window.scrollTo(0, document.body.scrollHeight);
+                                socket.auth.serverOffset = serverOffset;
+                                const sendButton = document.getElementById('sendButton')
+                                sendButton.removeAttribute('disabled');
+                            },
+                            error: function(xhr) {
+                                console.log(xhr)
+                            }
+                        })
+                    }else{
+                        console.log("Error in processing response.")
+                    }
+                });
+                }
+            });
+
+        
+        
+    </script>
+  </body>
+</html>

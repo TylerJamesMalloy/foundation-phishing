@@ -1,0 +1,73 @@
+<head>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://unpkg.com/jquery.terminal/js/jquery.terminal.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/jquery.terminal/css/jquery.terminal.min.css" />
+    <script src="https://unpkg.com/js-polyfills@latest/keyboard.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+
+<body >
+    <div class="container">
+        <div class="row">
+          <div class="col">
+            <h3>Experiment Consent Form</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <object type="application/pdf" data="public\img\Consent.pdf?#view=fitH" width="100%" height="500px" >
+              <param name="view" value="fitH" />
+            </object>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                Please answer the following:
+                <form style = "padding-bottom: 50px;" id="consent_form" width="100" height="100%" action="">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="Eighteen" id="EighteenYes" value="Yes">
+                      <label class="form-check-label" for="EighteenYes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="Eighteen" id="EighteenNo" value="No">
+                      <label class="form-check-label" for="EighteenNo">No</label>
+                    </div>
+                    I am age 18 or older.
+                    <br><br>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="Understand" id="UnderstandYes" value="Yes">
+                      <label class="form-check-label" for="UnderstandYes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="Understand" id="UnderstandNo" value="No">
+                      <label class="form-check-label" for="UnderstandNo">No</label>
+                    </div>
+                    I have read and understand the information above
+                    <br><br>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="Participate" id="ParticipateYes" value="Yes">
+                      <label class="form-check-label" for="ParticipateYes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="Participate" id="ParticipateNo" value="No">
+                      <label class="form-check-label" for="ParticipateNo">No</label>
+                    </div>
+                    I want to participate in this research and continue with the activity
+                    <br><br>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="Eligibility" id="EligibilityYes" value="Yes">
+                      <label class="form-check-label" for="EligibilityYes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="Eligibility" id="EligibilityNo" value="No">
+                      <label class="form-check-label" for="EligibilityNo">No</label>
+                    </div>
+                    I have reviewed the eligibility requirements listed in the Participant Requirements section of this consent form and certify that I am eligible to participate in this research, to the best of my knowledge.
+                  <br><br>
+                  <button  type="button" class="btn btn-block send-button btn-primary tx-tfm" id="Continue">Sign & Submit</button>
+                </form>
+            </div>
+          </div>
+      </div>
+</body>

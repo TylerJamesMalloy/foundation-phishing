@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Socket.IO chat</title>
+    <style>
+        body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+        #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+        #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+        #input:focus { outline: none; }
+        #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+
+        #messages { list-style-type: none; margin: 0; padding: 0; }
+        #messages > li { padding: 0.5rem 1rem; }
+        #messages > li:nth-child(odd) { background: #efefef; }
+
+        #body{
+            min-height: 100vh;
+            min-width:  100vw;
+        }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+      let counter = 0;
+
+      const socket = io({
+        auth: {
+          serverOffset: 0
+        },
+        ackTimeout: 10000,
+        retries: 3,
+      });
+      
+      var Trial = localStorage.getItem("Trial")
+      var Confidence = localStorage.getItem("Confidence");
+      var Action = localStorage.getItem("Action");
+      var Decision = localStorage.getItem("Decision");
+      var Mturkid = localStorage.getItem("Mturkid");
+      var EmailID = localStorage.getItem("EmailID");
+      var Type = localStorage.getItem("Type");
+      var Sender = localStorage.getItem("Sender");
+      var Subject = localStorage.getItem("Subject");
+      var Body = localStorage.getItem("Body");
+      var Representation = localStorage.getItem("Representation");
+      var Link = localStorage.getItem("Link");
+      var LinkText = localStorage.getItem("LinkText");
+
+      if(Decision == "true"){
+        var decisionString = "was"
+      }else{
+        var decisionString = "was not"
+      }
+
+      const form = document.getElementById('form');
+      const input = document.getElementById('input');
+      const messages = document.getElementById('messages');
+
+      var points = -1
+      if((Decision == "true" && Type=="phishing") || (Decision == "true" && Type=="spam") || (Decision == "false" && Type=="ham")){
+        points = 1
+      }
+
+      const item = document.createElement('li');
+      item.id = messages.getElementsByTagName("li").length;
+      item.style.fontSize = "32px";
+      if(Type == "N/A"){
+        item.textContent = "This email could not be generated, you recieved 1 points for this trial.";
+      }else{
+        var TypeString = Type
+        if (Type=="ham"){
+          TypeString = "not a phishing"
+        }else{
+          TypeString = "a phishing"
+        }
+        item.textContent = "This email was " + TypeString + " email, and you said that it " + decisionString + " a phishing email. You recieved " + points + " point for this trial.";
+      }
+      
+      messages.appendChild(item);
+    </script>
+  </body>
+</html>

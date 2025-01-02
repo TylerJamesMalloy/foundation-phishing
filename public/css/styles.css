@@ -1,0 +1,169 @@
+body, html {
+    height: 100vb;
+    margin: 0;
+}
+.container {
+    /* height: 100vb; */
+    width: 1200px;
+    display: flex;
+    flex-wrap: wrap; /* Allow content to wrap to the next line */
+    
+}
+
+.vertical-center {
+height:100%;
+width:100%;
+
+text-align: left;  /* align the inline(-block) elements horizontally */
+font: 0/0 a;         /* remove the gap between inline(-block) elements */
+}
+
+.vertical-center:before {    /* create a full-height inline block pseudo=element */
+content: ' ';
+display: inline-block;
+vertical-align: middle;  /* vertical alignment of the inline element */
+height: 100%;
+}
+
+.vertical-center > .container {
+max-width: 100%;
+/*background-color: #6699CC;*/
+
+.inactiveLink {
+    pointer-events: none;
+    cursor: default;
+ }
+ 
+.center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+display: inline-block;
+vertical-align: middle;  /* vertical alignment of the inline element */
+font: 18px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;        /* <-- reset the font property */
+}
+
+.disabled {
+    pointer-events: none;
+    cursor: default;
+  }
+
+.no-spacing {
+    margin: 0; padding:0;
+}
+
+.break-text p {
+    word-wrap: break-word;
+  }
+
+.form-section {
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ul {
+    height: 100%;
+    width: 100%;
+}
+.block1 {
+    height: 50%;
+    width: 60%;
+}
+
+.block2 {
+    height: 602px;
+    width: 40%;
+}
+
+
+.block3 {
+    height: 20vb;
+    width: 100%;
+    gap: 20px; /* Adjust the value to add more or less space between buttons */
+}
+
+#correctButton, #wrongButton {
+    background-size: contain; /* Change to 'cover' if needed */
+   /*  width: 25%; */
+    height: 35%;
+    border: none;
+    background-color: transparent; /* Set background color to transparent */ 
+}
+
+#nextButton {
+    width: 160px;
+    height: 60px;
+    background-size: contain; /* Change to 'cover' if needed */ 
+    border: 1px solid #d3d3d3; /* Light gray border color and 1px thickness */
+
+}
+
+
+
+#correctButton img,
+#wrongButton img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#correctButton.pressed,
+#wrongButton.pressed {
+border: 1px solid #888686; /* Change border color to black in the pressed state */
+}
+
+
+/* Apply to the table element */
+.table {
+    width: 100%;
+    border-collapse: separate;
+    /*border-spacing: 0; /* Adjust the spacing between rows */
+}
+
+/* Apply to the table rows */
+.table tr {
+    margin-bottom: 5px; /* Adjust the spacing between rows as needed */
+}
+
+/* Apply to the table cells */
+.table td {
+    width: 14.28%; /* 100% / 7 columns */
+    text-align: left;
+    vertical-align: middle;
+   /* padding: 5px; /* Adjust the padding within each cell as needed */
+    border: none; /* Add this line to remove border for the entire table */
+}
+
+/* Style for smaller text size in the Extremes Column */
+.extremes {
+    font-size: 12px; /* Adjust the font size as needed */
+}
+
+.form-group {
+    font-size: 14px;
+}
+
+.form-check-input {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc; /* Default border color for unchecked state */
+}
+
+.form-check-input:checked {
+    border: 2px solid #007bff; /* Border color for checked state */
+    background-color: #007bff; /* Background color for checked state */
+}
+
+#formchat { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+#inputchat { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+#inputchat:focus { outline: none; }
+#formchat > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+
+#messages { list-style-type: none; margin: 0; padding: 0; }
+#messages > li { padding: 0.5rem 1rem; }
+#messages > li:nth-child(odd) { background: #efefef; }

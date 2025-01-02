@@ -1,0 +1,47 @@
+<head>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://unpkg.com/jquery.terminal/js/jquery.terminal.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/jquery.terminal/css/jquery.terminal.min.css" />
+    <script src="https://unpkg.com/js-polyfills@latest/keyboard.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/public/css/styles.css" type="text/css" media="all">
+</head>
+
+
+<body>
+    <div class="grid">
+        <div class="row" id="block">
+            <div class="mx-auto hello">
+                <div class="header-title">
+                   
+                </div>
+             </div>
+            <div class="info">
+                </br>
+                <div class="col-md-12 mx-auto">
+                    <h1 class="wv-heading--title">
+                        Welcome
+                    </h1>
+                </div>
+               <div class="col-md-12 mx-auto">
+                <div class="myform form ">
+                <form style = "padding-bottom: 50px;" id="consent_form" width="100%" height="80%" action="">
+                    <h4>Select a Testing Condition</h4></br>
+                    <div class="condition form-group">
+                        <label class="control-label" for="condition">Choose a condition below for the experiment testing.</label>
+                        <select type="text" name="condition"  class="form-control my-input" id="condition" placeholder="condition">
+                            <option value="R" selected>Randomly select a condition.</option>
+                            <option value="1">Randomly selected emails with point feedback.</option>
+                            <option value="2">IBL selected emails with point feedback.</option>
+                            <option value="3">Randomly selected emails with natural language feedback.</option>
+                            <option value="4">IBL selected emails with natural language feedback</option>
+                        </select>
+                    </div> 
+                    <button  type="button" class="btn btn-block send-button btn-primary tx-tfm" id="Continue">Continue</button>
+                </form>
+                </div>
+           </div>
+        </div>
+    </div>
+    </div>
+</body>

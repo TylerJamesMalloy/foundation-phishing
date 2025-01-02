@@ -1,0 +1,32 @@
+<head>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://unpkg.com/jquery.terminal/js/jquery.terminal.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/jquery.terminal/css/jquery.terminal.min.css" />
+    <script src="https://unpkg.com/js-polyfills@latest/keyboard.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/public/css/styles.css" type="text/css" media="all">
+</head>
+
+<script>
+    $("#demog_form").submit(function() {
+        search($("#mid").get(0));
+        return false;
+    });
+</script>
+
+<body>
+    <div class="container">
+        <div class="col-7 mx-auto text-center justify-content-center" >
+        <h2 class="wv-heading--subtitle text-center">
+            Please enter your Mechanical Turk ID. And press submit. 
+        </h2>
+        </br>
+        <div class="myform form ">
+            <div class="form-group" id="mid">
+                <input type="text" name="mid" id="mid" minlength="6"  class="form-control my-input" placeholder="Worker ID">
+            </div>
+            <button  type="button" class="btn btn-block send-button btn-primary tx-tfm" id="Submit">Submit</button>
+        </div>
+    </div>
+    </div>
+</body>
