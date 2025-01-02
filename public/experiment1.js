@@ -590,7 +590,7 @@ function experiment(phaseValue, repeat) {
   }
 
 
-TESTING = 0
+TESTING = 1
 // Create a timeline with the defined trials
 
 if(TESTING != 1){
@@ -606,90 +606,14 @@ if(TESTING != 1){
   }else{
     timeline.push(preTrialInstructions)
   }
-}else{
-  timeline.push(testing)
 }
 
-timeline.push(experiment('Training', 40));
-timeline.push(postTrialInstructions)
-timeline.push(experiment('postTraining', 10));
-timeline.push(postQuestionnaire)
-//timeline.push(debrief);
+timeline.push(experiment('Training', 10));
 timeline.push(endTrial);
 
 
 function startExp() {
-// Initialize the PsychJS experiment with the timeline
-    jsPsych.run(timeline);
-    //return true;
+  // Initialize the PsychJS experiment with the timeline
+  jsPsych.run(timeline);
+  //return true;
 }
-
-/*
-else{
-        openAPIclient.getChatCompletions(GPT_VERSION, Messages, { maxTokens: 128})
-          .then(result => {
-              var sql_message = mysql_real_escape_string(result.choices[0].message.content)
-              var Moment = moment().format('yyyy-MM-dd:hh:mm:ss')
-              var sqlInsert = `INSERT INTO MainMessages (Moment, MTurkId, EmailId, UserId,  Trial, MessageNum, Message) VALUES ('` + Moment + `','` + MTurkId + `','`  + EmailId + `','`  + UserId  + `','` + Trial + `','` + String(Messages.length) + `','` + sql_message + `')`
-              console.log(sqlInsert)
-              let newconn = new mysql.createConnection(config);
-              newconn.query(sqlInsert, function (err, result, fields) {
-                if (err) throw err;
-              });
-              res.send(result.choices[0].message.content)
-            }
-          ).catch(err => {
-            console.log(err)
-            res.send("Failed to load chat, you will recieve a point for this trial.")
-            //res.sendStatus(501);
-          });
-
-          // GET INITIAL RESPONSE FROM CHAT-GPT
-        response = $.ajax({
-          url: "/feedback",
-          data: { 
-              "MTurkId"   : mturkid,
-              "UserId"    : userid,
-              "EmailId"   : emailid,
-              "Trial"     : trial, 
-              "Condition" : condition,
-              "Messages"  : message_request,
-              "RelevantQuestions": relevantQuestions,
-          },
-          async:false,
-          cache: false,
-          type: "GET",
-          success: function(response) {
-              responses = response.split("\n-")
-              for (let ii = 0; ii < responses.length; ii++){
-                  var item = document.createElement('li');
-                  item.id = messages.getElementsByTagName("li").length;
-                  if(condition == 1){
-                      item.style.fontSize = "24px";
-                  }
-                  item.textContent = responses[ii];
-                  if(ii > 0){
-                      item.textContent = '-' + item.textContent 
-                  }
-                  
-                  messages.appendChild(item);
-              }
-              var response_dict = {"role": "system", "content": response}
-              message_request.push(response_dict)
-              document.getElementById("form").reset();
-              //window.scrollTo(0, document.body.scrollHeight);
-              socket.auth.serverOffset = serverOffset;
-              },
-          error: function(xhr) {
-              console.log(xhr)
-          }
-      })
-  
-      var Moment = moment().format('yyyy-MM-dd:hh:mm:ss')
-      var sqlInsert = `INSERT INTO MainMessages (Moment, MTurkId, EmailId, UserId,  Trial, MessageNum, Message) VALUES ('` + Moment + `','` + MTurkId + `','`  + EmailId + `','`  + UserId  + `','` + Trial + `','` + String(Messages.length - 1) + `','` + sql_message + `')`
-      console.log(sqlInsert)
-      let newconn = new mysql.createConnection(config);
-      newconn.query(sqlInsert, function (err, result, fields) {
-        if (err) throw err;
-      });
-*/

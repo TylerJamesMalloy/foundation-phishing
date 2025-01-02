@@ -87,66 +87,202 @@
             }
             var typeString = "was not"
         }
+        
+        
         var iblPredictionInformation = ""
         var previouslyObserved = localStorage.getItem("previouslyObserved").split(",")
-        // Sender Mismatch,Request Credentials,Subject Suspicious,Urgent,Offer,Link Mismatch
-        var form = document.getElementById('form');
-        var input = document.getElementById('input');
-        var messages = document.getElementById('messages'); 
-        var serverOffset = 0
-
-        var condition = localStorage.getItem("Condition");
-        var Decision = localStorage.getItem("Decision");
-        var Type = localStorage.getItem("Type");
-
-        var points = -1
-        if((Decision == "true" && Type=="phishing") || (Decision == "true" && Type=="spam") || (Decision == "false" && Type=="ham")){
-            points = 1
-        }
-        
-        var item = document.createElement('li');
-        item.id = messages.getElementsByTagName("li").length;
-        item.style.fontSize = "26px";
-
-        if(Type == "N/A"){
-            item.textContent = "This email could not be generated, you recieved 1 points for this trial. Please review the email before proceeding to the next experiment.";
-        }else{
-            var TypeString = Type
-            if (Type=="ham"){
-            TypeString = "not a phishing"
-            }else{
-            TypeString = "a phishing"
+        var response = $.ajax({
+            url: "/queryIBL",
+            data: { 
+                "UserId"            : userid,
+                "EmailType"         : type,
+                "PreviouslyObserved": previouslyObserved,
+            },
+            async:false,
+            cache: false,
+            type: "GET",
+            success: function(response) {
+                    iblPredictionInformation = response
+                },
+            error: function(xhr) {
+                console.log(xhr)
             }
-            item.textContent = "This email was " + TypeString + " email, and you said that it " + decisionString + " a phishing email. You recieved " + points + " point for this trial.";
-        }
-    
-        messages.appendChild(item);
-        // Determine a way to immediately display the feedback with the point information
-        // before the chat with GPT loads. 
-        
-        document.getElementById("input").remove()
-        document.getElementById("sendButton").remove()
+        }).done(
+            function(){
+                // Sender Mismatch,Request Credentials,Subject Suspicious,Urgent,Offer,Link Mismatch
+                inital_message = "This message is about phishing emails. Your role is to prodive feedback to students who are determining if emails are phishing emails based on whether the email contains a mismatched link, a mismatched sender, uses urgent language, makes an offer, requests credentials, or has a suspicious subject. Address the student directly and do not refer to the student in the third person. The student read the following email: "
+                
+                inital_message = inital_message.concat(email)
+                inital_message = inital_message.concat(" This email was send from ")
+                inital_message = inital_message.concat(sender)
+                inital_message = inital_message.concat(". And the subject was ")
+                inital_message = inital_message.concat(subject)
+                inital_message = inital_message.concat(". The student replied that this email ")
+                inital_message = inital_message.concat(decisionString)
+                inital_message = inital_message.concat(" a phishing email. This email in reality ")
+                inital_message = inital_message.concat(typeString)
+                inital_message = inital_message.concat(" a phishing email. The student replied that the action they took would be to ")
+                inital_message = inital_message.concat(actionString)
+                inital_message = inital_message.concat(" the email. The student had a confidence rating of ")
+                inital_message = inital_message.concat(howConfident)
+                inital_message = inital_message.concat(" out of 5. Make a short list of the relevant things in this email that made the student correct or incorrect. For your next response only, format your response as a dashed list and keep the reply to 120 tokens. Do not mention 'onclick return false' in your response.")
+                inital_message = inital_message.concat(iblPredictionInformation)
+                //console.log("INTIIAL MESSAGE: ", inital_message)
+                
+                var form = document.getElementById('form');
+                var input = document.getElementById('input');
+                var messages = document.getElementById('messages'); 
+                var message_request = [{"role": "system", "content": inital_message}]
+                var serverOffset = 0
 
-        var item = document.createElement('li');
-        item.id = messages.getElementsByTagName("li").length;
-        item.style.fontSize = "26px";
-        item.textContent = "Please review this email for 8 seconds."
-        messages.appendChild(item);
+                var condition = localStorage.getItem("Condition");
+                var Decision = localStorage.getItem("Decision");
+                var Type = localStorage.getItem("Type");
 
-        localStorage.setItem("Done", 0);
-        const yourFunction = async () => {
-            setTimeout(function() {
-                localStorage.setItem("Done", 1);
-                var item = document.createElement('li');
+                var points = -1
+                if((Decision == "true" && Type=="phishing") || (Decision == "true" && Type=="spam") || (Decision == "false" && Type=="ham")){
+                    points = 1
+                }
+                
+                const item = document.createElement('li');
                 item.id = messages.getElementsByTagName("li").length;
-                item.style.fontSize = "26px";
-                item.textContent = "Proceed to the next question."
-                messages.appendChild(item);
-            }, 8000);
-            
-        };
+                item.style.fontSize = "20px";
 
-        yourFunction()
+                if(Type == "N/A"){
+                    item.textContent = "This email could not be generated, you recieved 1 points for this trial.";
+                }else{
+                    var TypeString = Type
+                    if (Type=="ham"){
+                    TypeString = "not a phishing"
+                    }else{
+                    TypeString = "a phishing"
+                    }
+                    item.textContent = "This email was " + TypeString + " email, and you said that it " + decisionString + " a phishing email. You recieved " + points + " point for this trial.";
+                }
+            
+                messages.appendChild(item);
+                // Determine a way to immediately display the feedback with the point information
+                // before the chat with GPT loads. 
+
+                if(localStorage.getItem("Chat") == 1){
+                    // GET INITIAL RESPONSE FROM CHAT-GPT
+                response = $.ajax({
+                    url: "/feedback",
+                    data: { 
+                        "MTurkId"   : mturkid,
+                        "UserId"    : userid,
+                        "EmailId"   : emailid,
+                        "Trial"     : trial, 
+                        "Condition" : condition,
+                        "Messages"  : message_request,
+                        "RelevantQuestions": relevantQuestions,
+                        "TotalQuestions": totalQuestions,
+                        "InitialMessage": true,
+                    },
+                    async:false,
+                    cache: false,
+                    type: "GET",
+                    success: function(response) {
+                        responses = response.split("\n-")
+                        for (let ii = 0; ii < responses.length; ii++){
+                            var item = document.createElement('li');
+                            item.id = messages.getElementsByTagName("li").length;
+                            if(condition == 1){
+                                item.style.fontSize = "24px";
+                            }
+                            item.textContent = responses[ii];
+                            if(ii > 0){
+                                item.textContent = '-' + item.textContent 
+                            }
+                            messages.appendChild(item);
+                        }
+                        var response_dict = {"role": "system", "content": response}
+                        message_request.push(response_dict)
+                        document.getElementById("form").reset();
+                        //window.scrollTo(0, document.body.scrollHeight);
+                        socket.auth.serverOffset = serverOffset;
+                        },
+                    error: function(xhr) {
+                        console.log(xhr)
+                    }
+                })
+                
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    //console.log("message_request length", message_request.length)
+                    if (input.value) {
+                        var message_dict = {"role": "user", "content": input.value}
+                        message_request.push(message_dict)
+                        const item = document.createElement('li');
+                        item.id = messages.getElementsByTagName("li").length;
+                        item.textContent = input.value;
+                        messages.appendChild(item);
+                        document.getElementById("form").reset();
+                        window.scrollTo(0, document.body.scrollHeight);
+                        socket.auth.serverOffset = serverOffset;
+                        const sendButton = document.getElementById('sendButton');
+                        sendButton.setAttribute('disabled', 'disabled');
+                        // Uncomment to allow for passing through experiment after irrelevant questions
+                        //localStorage.setItem("Done", 1);
+                        response = $.ajax({
+                            url: "/feedback",
+                            data: { 
+                                "MTurkId"   : mturkid,
+                                "UserId"    : userid,
+                                "EmailId"   : emailid,
+                                "Trial"     : trial, 
+                                "Condition" : condition,
+                                "Messages"  : message_request,
+                                "RelevantQuestions": relevantQuestions,
+                                "TotalQuestions": totalQuestions,
+                                "InitialMessage": false,
+                            },
+                            cache: false,
+                            type: "GET",
+                            success: function(response) {
+                                if(response != "That message does not seem to be a question relevant to phishing emails, please ask a relevant question or continue to the next trial of the experiment." && response != "That message seems too short for me to reply with useful information about phishing emails. Please ask a question with more context so I can be a helpful teaching aid." && response != "I couldn't provide feedback for that. My appologies."){
+                                    var message_dict = {"role": "system", "content": response}
+                                    message_request.push(message_dict)  
+                                    localStorage.setItem("Done", 1);
+                                    relevantQuestions = relevantQuestions + 1
+                                }
+                                totalQuestions = totalQuestions + 1
+                                
+                                responses = response.split("\n-")
+                                for (let ii = 0; ii < responses.length; ii++){
+                                    var item = document.createElement('li');
+                                    item.id = messages.getElementsByTagName("li").length;
+                                    if(condition == 1){
+                                        item.style.fontSize = "24px";
+                                    }
+                                    item.textContent = responses[ii];
+                                    if(ii > 0){
+                                        item.textContent = '-' + item.textContent 
+                                    }
+                                    messages.appendChild(item);
+                                }
+                                //const item = document.createElement('li');
+                                //item.id = messages.getElementsByTagName("li").length;
+                                //item.textContent = response;
+                                //messages.appendChild(item);
+                                document.getElementById("form").reset();
+                                window.scrollTo(0, document.body.scrollHeight);
+                                socket.auth.serverOffset = serverOffset;
+                                const sendButton = document.getElementById('sendButton')
+                                sendButton.removeAttribute('disabled');
+                            },
+                            error: function(xhr) {
+                                console.log(xhr)
+                            }
+                        })
+                    }else{
+                        console.log("Error in processing response.")
+                    }
+                });
+                }
+            });
+
+        
         
     </script>
   </body>

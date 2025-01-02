@@ -13,11 +13,8 @@ dotenv.config();
 
 import mysql from 'mysql2'
 import fs from 'fs'
-console.log(process.env.AZURE_OPENAI_ENDPOINT)
-console.log(process.env.AZURE_OPENAI_KEY)
-//console.log(process.env.AZURE_DB_PASSWORD)
-//console.log(fs.readFileSync("./DigiCertGlobalRootCA.crt.pem"))
-//  The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior
+console.log(process.env.OPENAI_ENDPOINT)
+console.log(process.env.OPENAI_KEY)
 process.setMaxListeners(0);
 
 import spawn from 'child_process';
@@ -47,6 +44,9 @@ import ip from "ip";
  
 var Condition3Phishing = [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47, 51, 55, 59, 63, 67, 71, 75, 79, 83, 87, 91, 95, 99, 103, 107, 111, 115, 119, 123, 127, 131, 135, 139, 143, 147, 151, 155, 159, 163, 167, 171, 175, 179, 183, 187, 191, 195, 199, 203, 207, 211, 215, 219, 223, 227, 231, 235, 239, 243, 247, 251, 255, 259, 263, 267, 271, 275, 279, 283, 287, 291, 295, 299, 303, 307, 311, 315, 319, 323, 327, 331, 335, 339, 343, 347, 351, 355, 359, 363, 367, 371, 375, 379, 383, 387, 391, 395, 399, 403, 407, 411, 415, 419, 423, 427, 431, 435, 439, 443, 447, 454, 458, 462, 466, 470, 474, 478, 482, 486, 490, 494, 498, 502, 506, 510, 514, 518, 522, 526, 530, 534, 538, 542, 546, 550, 554, 558, 562, 566, 570, 574, 578, 582, 586, 590, 594, 598, 602, 606, 610, 614, 618, 622, 626, 630, 634, 636, 639, 643, 647, 651, 655, 659, 663, 667, 671, 675, 679, 683, 687, 691, 695, 699, 703, 707, 711, 715, 719, 723, 727, 731, 735, 739, 743, 747, 751, 755]
 var Condition3Ham      = [759, 763, 767, 771, 775, 779, 783, 787, 791, 795, 799, 803, 807, 811, 815, 819, 823, 827, 831, 835, 839, 843, 847, 851, 855, 859, 863, 867, 871, 875, 879, 883, 887, 891, 895, 899, 903, 907, 911, 915, 919, 923, 927, 931, 935, 939, 943, 947, 951, 955, 959, 963, 967, 971, 975, 979, 983, 987, 991, 995, 999, 1003, 1007, 1011, 1015, 1019, 1023, 1027, 1031, 1035, 1039, 1043, 1047, 1051, 1055, 1059, 1063, 1067, 1071, 1075, 1079, 1083, 1087, 1091, 1095, 1099, 1103, 1107, 1111, 1115, 1119, 1123, 1127, 1131, 1135, 1139, 1143, 1147, 1151, 1155, 1159, 1163, 1167, 1171, 1175, 1179, 1183, 1187, 1191, 1195, 1199, 1203, 1207, 1211, 1215, 1219, 1223, 1227, 1231, 1235, 1239, 1243, 1247, 1251, 1255, 1259, 1263, 1267, 1271, 1275, 1279, 1283, 1287, 1291, 1295, 1299, 1303, 1307, 1311, 1315, 1319, 1323, 1327, 1331, 1335, 1339, 1343, 1347, 1351, 1355, 1359, 1363, 1367, 1371, 1375, 1379, 1383, 1387, 1391, 1395, 1399, 1403, 1407, 1411, 1415, 1419, 1423, 1427, 1431, 1435, 1439, 1443, 1447, 1451, 1455, 1459, 1463]
+
+var Condition4Phishing = [1, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45, 49, 53, 57, 61, 65, 69, 73, 77, 81, 85, 89, 93, 97, 101, 105, 109, 113, 117, 121, 125, 129, 133, 137, 141, 145, 149, 153, 157, 161, 165, 169, 173, 177, 181, 185, 189, 193, 197, 201, 205, 209, 213, 217, 221, 225, 229, 233, 237, 241, 245, 249, 253, 257, 261, 265, 269, 273, 277, 281, 285, 289, 293, 297, 301, 305, 309, 313, 317, 321, 325, 329, 333, 337, 341, 345, 349, 353, 357, 361, 365, 369, 373, 377, 381, 385, 389, 393, 397, 401, 405, 409, 413, 417, 421, 425, 429, 433, 437, 441, 445, 449, 452, 456, 460, 464, 468, 472, 476, 480, 484, 488, 492, 496, 500, 504, 508, 512, 516, 520, 524, 528, 532, 536, 540, 544, 548, 552, 556, 560, 564, 568, 572, 576, 580, 584, 588, 592, 596, 600, 604, 608, 612, 616, 620, 624, 628, 632, 637, 641, 645, 649, 653, 657, 661, 665, 669, 673, 677, 681, 685, 689, 693, 697, 701, 705, 709, 713, 717, 721, 725, 729, 733, 737, 741, 745, 749, 753]
+var Condition4Ham      = [757, 761, 765, 769, 773, 777, 781, 785, 789, 793, 797, 801, 805, 809, 813, 817, 821, 825, 829, 833, 837, 841, 845, 849, 853, 857, 861, 865, 869, 873, 877, 881, 885, 889, 893, 897, 901, 905, 909, 913, 917, 921, 925, 929, 933, 937, 941, 945, 949, 953, 957, 961, 965, 969, 973, 977, 981, 985, 989, 993, 997, 1001, 1005, 1009, 1013, 1017, 1021, 1025, 1029, 1033, 1037, 1041, 1045, 1049, 1053, 1057, 1061, 1065, 1069, 1073, 1077, 1081, 1085, 1089, 1093, 1097, 1101, 1105, 1109, 1113, 1117, 1121, 1125, 1129, 1133, 1137, 1141, 1145, 1149, 1153, 1157, 1161, 1165, 1169, 1173, 1177, 1181, 1185, 1189, 1193, 1197, 1201, 1205, 1209, 1213, 1217, 1221, 1225, 1229, 1233, 1237, 1241, 1245, 1249, 1253, 1257, 1261, 1265, 1269, 1273, 1277, 1281, 1285, 1289, 1293, 1297, 1301, 1305, 1309, 1313, 1317, 1321, 1325, 1329, 1333, 1337, 1341, 1345, 1349, 1353, 1357, 1361, 1365, 1369, 1373, 1377, 1381, 1385, 1389, 1393, 1397, 1401, 1405, 1409, 1413, 1417, 1421, 1425, 1429, 1433, 1437, 1441, 1445, 1449, 1453, 1457, 1461]
 
 // https://learn.microsoft.com/en-us/azure/mysql/single-server/connect-nodejs?tabs=windows
 var config =
@@ -234,16 +234,31 @@ app.get('/content', function(req, res){
   var PreviouslyObserved = req.query.PreviouslyObserved
   var PhaseValue = req.query.PhaseValue
   PreviouslyObserved = PreviouslyObserved.split(",")
-   
-  if(EmailType == "ham"){
-    var index = randomExcluded(Condition3Ham, 0,176, PreviouslyObserved)
-    var email = emailData[index]
-    res.send(email.join(','))
+  
+  if(Condition === 1 || Condition === 2){
+    if(EmailType == "ham"){
+      var index = randomExcluded(Condition3Ham, 0,176, PreviouslyObserved)
+      var email = emailData[index]
+      res.send(email.join(','))
+    }else{
+      var index = randomExcluded(Condition3Phishing, 0,188, PreviouslyObserved)
+      var email = emailData[index]
+      res.send(email.join(','))
+    }
+  }else if(Condition === 3 || Condition === 4){
+    if(EmailType == "ham"){
+      var index = randomExcluded(Condition4Ham, 0,176, PreviouslyObserved)
+      var email = emailData[index]
+      res.send(email.join(','))
+    }else{
+      var index = randomExcluded(Condition4Phishing, 0,188, PreviouslyObserved)
+      var email = emailData[index]
+      res.send(email.join(','))
+    }
   }else{
-    var index = randomExcluded(Condition3Phishing, 0,188, PreviouslyObserved)
-    var email = emailData[index]
-    res.send(email.join(','))
+    res.send("Error fetching email")
   }
+  
 
 });  
 
@@ -331,95 +346,65 @@ app.get('/feedback', function(req, res){
     res.send("I couldn't provide feedback for that. My appologies.")
   }
   var sql_message = mysql_real_escape_string(stringify)
-
-  // uncomment to save all messages from users
-  //var sqlInsert = `INSERT INTO MainMessages (Moment, MTurkId, UserId, EmailId,  Trial, MessageNum, Message) VALUES ('` + Moment + `','` + MTurkId + `','`  + UserId + `','`  + EmailId + `','` + Trial + `','` + Messages.length + `','` + sql_message + `')` 
-  //console.log(sqlInsert)
-  //pool.query(sqlInsert, function (err, result, fields) {
-  //  if (err) throw err;
-  //});
   
   var response = ""
-  if(Condition != 1){
-    if(relevantQuestions < 2 && totalQuestions < 10){
-      var last_message = Messages[Messages.length - 1]
-      var last_message_relevant = [{"role": "system", "content": "Your job is to determine if messages sent by students in a phishing email identification experiment are about the topic of emails or phishing emails. Reply with a 1 if the message is relevant to phishing emails or a 0 if it is irrelevant."}, last_message]
-      openAPIclient.getChatCompletions(GPT_VERSION, last_message_relevant, {maxTokens:1})
-      .then(result => {
-          if(result.choices[0].message.content == "0" & InitialMessage != "true"){
-            response = "That message does not seem to be a question relevant to phishing emails, please ask a relevant question or continue to the next trial of the experiment." 
+  if(relevantQuestions < 2 && totalQuestions < 10){
+    var last_message = Messages[Messages.length - 1]
+    var last_message_relevant = [{"role": "system", "content": "Your job is to determine if messages sent by students in a phishing email identification experiment are about the topic of emails or phishing emails. Reply with a 1 if the message is relevant to phishing emails or a 0 if it is irrelevant."}, last_message]
+    openAPIclient.getChatCompletions(GPT_VERSION, last_message_relevant, {maxTokens:1})
+    .then(result => {
+        if(result.choices[0].message.content == "0" & InitialMessage != "true"){
+          response = "That message does not seem to be a question relevant to phishing emails, please ask a relevant question or continue to the next trial of the experiment." 
+          res.send(response)
+        }else if(last_message.content.length < 20 & InitialMessage != "true"){
+          response = "That message seems too short for me to reply with useful information about phishing emails. Please ask a question with more context so I can be a helpful teaching aid."
+          res.send(response)
+        }else{
+          openAPIclient.getChatCompletions(GPT_VERSION, Messages, { maxTokens: 150} )
+          .then(result => {
+              response = mysql_real_escape_string(result.choices[0].message.content)
+              res.send(result.choices[0].message.content)
+            }
+          ).catch(err => {
+            console.log(err)
+            response = "I couldn't provide feedback for that. My appologies."
             res.send(response)
-          }else if(last_message.content.length < 20 & InitialMessage != "true"){
-            response = "That message seems too short for me to reply with useful information about phishing emails. Please ask a question with more context so I can be a helpful teaching aid."
-            res.send(response)
-          }else{
-            openAPIclient.getChatCompletions(GPT_VERSION, Messages, { maxTokens: 150} )
-            .then(result => {
-                response = mysql_real_escape_string(result.choices[0].message.content)
-                res.send(result.choices[0].message.content)
-              }
-            ).catch(err => {
-              console.log(err)
-              response = "I couldn't provide feedback for that. My appologies."
-              res.send(response)
-            });
-          }
+          });
         }
-      ).catch(err => {
-        console.log(err)
-        response = "I couldn't provide feedback for that. My appologies."
-        res.send(response)
-      });
-    }else{
-      res.send("")
-    }
+      }
+    ).catch(err => {
+      console.log(err)
+      response = "I couldn't provide feedback for that. My appologies."
+      res.send(response)
+    });
+  }else{
+    res.send("")
   }
 
 });
   
 app.get('/queryIBL', function(req, res){
-  var UserId = req.query.UserId
-  var EmailType = req.query.EmailType
-  var PreviouslyObserved = req.query.PreviouslyObserved
-
-  const query = queryIBL(UserId, EmailType, PreviouslyObserved)
-    query.then((index) =>{
-      const emailFeatures  = emailData[index].slice(6,14)
-      const Sender = emailFeatures[0]
-      const Subject = emailFeatures[1]
-      const SenderMismatch = emailFeatures[2]
-      const RequestCredentials = emailFeatures[3]
-      const SubjectSuspicious = emailFeatures[4]
-      const Urgent = emailFeatures[5]
-      const Offer = emailFeatures[6]
-      const LinkMismatch = emailFeatures[7]
-      //const representation = representations[index]
-      //var rep =  JSON.stringify(representation)
-      
-      var message = "In your feedback, order the importance of feedback based on the following information. This student may not be efficient with emails similar to ones that are sent from "
-      message = message.concat(Sender)
-      message = message.concat( " and have a subject line ")
-      message = message.concat(Subject)
-      message = message.concat( " There are several features that this participant may have trouble with, for these features 0 represents false and 1 represents true. The has a sender mismatch value of ")
-      message = message.concat(SenderMismatch)
-      message = message.concat( " and has a requests credential value of ")
-      message = message.concat(RequestCredentials)
-      message = message.concat( " and has a subject suspicious value of ")
-      message = message.concat(SubjectSuspicious)
-      message = message.concat( " and has an urgent value of ")
-      message = message.concat(Urgent)
-      message = message.concat( " and has an offer value of ")
-      message = message.concat(Offer)
-      message = message.concat( " and has an link mismatch value of ")
-      message = message.concat(LinkMismatch)
-      message = message.concat(". Do not refer directly to any of this information but use it in your feedback.")
-      res.send(message)
-    });
-  
+  res.send("")
 });
 
 app.get('/', (req,res)=>{
-  res.sendFile(path.join(__dirname, 'public/html/startExperiment.html'));
+  res.sendFile(path.join(__dirname, 'public/html/startExperiment1.html'));
+})
+
+app.get('/experiment1', (req,res)=>{
+  res.sendFile(path.join(__dirname, 'public/html/startExperiment1.html'));
+})
+
+app.get('/experiment2', (req,res)=>{
+  res.sendFile(path.join(__dirname, 'public/html/startExperiment2.html'));
+})
+
+app.get('/experiment3', (req,res)=>{
+  res.sendFile(path.join(__dirname, 'public/html/startExperiment3.html'));
+})
+
+app.get('/experiment4', (req,res)=>{
+  res.sendFile(path.join(__dirname, 'public/html/startExperiment4.html'));
 })
 
 
