@@ -10,8 +10,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 import fs from 'fs'
-console.log(process.env.OPENAI_ENDPOINT)
-console.log(process.env.OPENAI_KEY)
+console.log(process.env.AZURE_OPENAI_ENDPOINT)
+console.log(process.env.AZURE_OPENAI_KEY)
 process.setMaxListeners(0);
 
 import {Server as HTTPServer} from 'http'
