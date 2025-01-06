@@ -448,7 +448,7 @@ var check_feedback_data = function(elem){
     if(Condition != 1){
       alert("You responded incorrectly to whether this was a phishing email or not. If you wish to continue, you must ask the teacher at least one relevant question.")
     }else{
-      alert("Please review this email for at least 10 seconds before continuing.")
+      alert("You responded incorrectly to whether this was a phishing email or not. If you wish to continue, you must ask the teacher at least one relevant question.")
     }
     return false
   }else{
