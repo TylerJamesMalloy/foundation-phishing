@@ -400,22 +400,7 @@ var endTrial = {
       payout = payout.toString()
       // Save all data to csv as a backup to the database: 
       // console.log(all_data.csv());
-      var output = `<h2> Thank you for participating. The experiment is now complete. <br> Enter this code to recieve payment: ` + userID + `</h2> <h3> ` + conditon_string + ` <h3>` + `<h3>Your bonus payment for this experiment will be calculated shortly and is added to your base payment of $5.<h3>` + `
-      <br> You may click away from this screen at any time after submitting your payment code. 
-      <body >
-          <div class="container">
-              <div class="row">
-                <div class="col">
-                  <h1>Study Debriefing</h1>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <object type="application/pdf" data="public\\img\\Debriefing.pdf" width="100%" height="1000px" ></object>
-                </div>
-              </div>
-            </div>
-      </body>`
+      var output = `<h2> End of demo. Thank you for your interest </h2>`
       //console.log(jsPsych.data.get().csv()); 
       // console.log(jsPsych.data.get())
       return output
