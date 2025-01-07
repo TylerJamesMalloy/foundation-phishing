@@ -355,7 +355,7 @@ app.get('/queryIBL', function(req, res){
 });
 
 app.get('/', (req,res)=>{
-  res.sendFile(path.join(__dirname, 'public/html/startExperiment1.html'));
+  res.sendFile(path.join(__dirname, 'public/html/landing.html'));
 })
 
 app.get('/experiment1', (req,res)=>{
