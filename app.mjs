@@ -23,12 +23,12 @@ import {parse} from 'csv-parse';
 import { OpenAIClient, AzureKeyCredential } from "@azure/openai"
 
 // Human Written, GPT-4 Stylized
-var Condition3Phishing = [103, 107, 115, 119, 127, 131, 135]
-var Condition3Ham      = [759, 763, 771, 783, 787, 795, 1007]
+var Condition3Phishing = [103, 107, 115, 119, 127, 131, 135, 147, 143, 151, 163]
+var Condition3Ham      = [759, 763, 771, 783, 787, 795, 1007, 1047, 1063, 1253, 1077]
 
 // GPT-4 Written, GPT-4 Stylized
-var Condition4Phishing = [101, 105, 113, 117, 125, 129, 133]
-var Condition4Ham      = [757, 761, 769, 781, 785, 793, 1005]
+var Condition4Phishing = [101, 105, 113, 117, 125, 129, 133, 145, 141, 149, 161]
+var Condition4Ham      = [757, 761, 769, 781, 785, 793, 1005, 1045, 1061, 1255, 1079]
 
 // https://learn.microsoft.com/en-us/azure/mysql/single-server/connect-nodejs?tabs=windows
 const openAPIclient = new OpenAIClient(
@@ -201,13 +201,6 @@ app.get('/content', function(req, res){
   var PhaseValue = req.query.PhaseValue
   PreviouslyObserved = PreviouslyObserved.split(",")
   var Trial = req.query.Trial
-  
-  console.log("Condition", Condition)
-  //console.log(emailData)
-  console.log(Trial)
-  console.log(Condition3Ham)
-  console.log(Condition3Ham[Trial])
-  console.log(emailData[Condition3Ham[Trial]])
 
   if(Condition === 1){
     if(EmailType == "ham"){
