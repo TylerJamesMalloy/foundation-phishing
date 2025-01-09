@@ -14,7 +14,7 @@ var MM = String(TODAY.getMonth() + 1).padStart(2, '0');
 var YYYY = TODAY.getFullYear();
 const DATE = YYYY + MM + DD;
 
-var conditionArray = [1]
+var conditionArray = [2]
 var Condition = conditionArray[Math.floor(Math.random() * conditionArray.length)];
 /*
   Main Study
