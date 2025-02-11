@@ -374,5 +374,5 @@ app.get('/experiment4', (req,res)=>{
   res.sendFile(path.join(__dirname, 'public/html/startExperiment4.html'));
 })
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8981;
 http.listen(port, () => console.log(`Listening on port ${port}`));
