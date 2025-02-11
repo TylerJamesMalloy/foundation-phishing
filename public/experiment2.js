@@ -14,8 +14,8 @@ var MM = String(TODAY.getMonth() + 1).padStart(2, '0');
 var YYYY = TODAY.getFullYear();
 const DATE = YYYY + MM + DD;
 
-var conditionArray = [1]
-var Condition = conditionArray[Math.floor(Math.random() * conditionArray.length)];
+var conditionArray = [2]
+var Condition = 2
 /*
   Main Study
   Condition 0: Randomly selected emails with point feedback: already completed
