@@ -20,7 +20,8 @@ import {Server, Socket} from 'socket.io';
 const io = new Server(http)
 
 import {parse} from 'csv-parse';
-import { OpenAIClient, AzureKeyCredential } from "@azure/openai"
+import { AzureOpenAI } from "openai";
+import { DefaultAzureCredential, getBearerTokenProvider } from "@azure/identity";
 
 // Human Written, GPT-4 Stylized
 var Condition3Phishing = [103, 107, 115, 119, 127, 131, 135, 147, 143, 151, 163]
@@ -30,15 +31,9 @@ var Condition3Ham      = [759, 763, 771, 783, 787, 795, 1007, 1047, 1063, 1253, 
 var Condition4Phishing = [101, 105, 113, 117, 125, 129, 133, 145, 141, 149, 161]
 var Condition4Ham      = [757, 761, 769, 781, 785, 793, 1005, 1045, 1061, 1255, 1079]
 
-// https://learn.microsoft.com/en-us/azure/mysql/single-server/connect-nodejs?tabs=windows
-const openAPIclient = new OpenAIClient(
-  process.env.AZURE_OPENAI_ENDPOINT, 
-  new AzureKeyCredential(process.env.AZURE_OPENAI_KEY)
-);
+const openAPIclient = new AzureOpenAI();
 
 export {openAPIclient};
-
-const GPT_VERSION = "gpt-4o"
 
 var messages=[
   {"role": "system", "content": "You are a helpful assistant."},
@@ -46,13 +41,16 @@ var messages=[
   {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
   {"role": "user", "content": "Where was it played?"}
 ]
-var completion = openAPIclient.getChatCompletions(GPT_VERSION, messages, { maxTokens: 150 })
+
+openAPIclient.chat.completions.create({messages, model:'gpt-4o-mini', max_tokens: 150})
 .then(result => {
     console.log(result.choices[0].message.content)
   }
 ).catch(err => {
   console.log(err)
 });
+
+
 
 import bodyParser from  'body-parser';
 // Add bodyParser middleware for handling URL-encoded data
@@ -318,7 +316,8 @@ app.get('/feedback', function(req, res){
   if(relevantQuestions < 2 && totalQuestions < 10){
     var last_message = Messages[Messages.length - 1]
     var last_message_relevant = [{"role": "system", "content": "Your job is to determine if messages sent by students in a phishing email identification experiment are about the topic of emails or phishing emails. Reply with a 1 if the message is relevant to phishing emails or a 0 if it is irrelevant."}, last_message]
-    openAPIclient.getChatCompletions(GPT_VERSION, last_message_relevant, {maxTokens:1})
+    //openAPIclient.chat.completions(last_message_relevant, {max_tokens:1})
+    openAPIclient.chat.completions.create({last_message_relevant, model:'gpt-4o-mini', max_tokens: 1})
     .then(result => {
         if(result.choices[0].message.content == "0" & InitialMessage != "true"){
           response = "That message does not seem to be a question relevant to phishing emails, please ask a relevant question or continue to the next trial of the experiment." 
@@ -327,7 +326,8 @@ app.get('/feedback', function(req, res){
           response = "That message seems too short for me to reply with useful information about phishing emails. Please ask a question with more context so I can be a helpful teaching aid."
           res.send(response)
         }else{
-          openAPIclient.getChatCompletions(GPT_VERSION, Messages, { maxTokens: 150} )
+          //openAPIclient.chat.completions(Messages, { max_tokens: 150} )
+          openAPIclient.chat.completions.create({Messages, model:'gpt-4o-mini', max_tokens: 150})
           .then(result => {
               response = mysql_real_escape_string(result.choices[0].message.content)
               res.send(result.choices[0].message.content)
